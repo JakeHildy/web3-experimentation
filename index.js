@@ -1,46 +1,41 @@
-const Web3 = require('web3');
-const URL = 'https://mainnet.infura.io/v3/0eed1fcfd57c445796f1cbb23fbb2a44';
-const randomAddress = '0x73BCEb1Cd57C711feaC4224D062b0F6ff338501e';
-const batAbi = require('./bat-abi.json');
-const batAddress = '0x0D8775F648430679A709E98d2b0Cb6250d2887EF';
+const { Buffer } = require("buffer");
 
-const web3 = new Web3(URL);
+// Step 1 - Configuration
+const Web3 = require("web3");
+const EthereumTransaction = require("ethereumjs-tx").Transaction;
+const url = "http://127.0.0.1:7545";
+const web3 = new Web3(url);
 
-// web3.eth.getBalance(randomAddress, (err, bal) => {
-//   console.log(web3.utils.fromWei(bal, 'ether'));
-// });
+// Step 2 - Set the sending and receiving addresses for the transaction.
+const sendingAddress = "0xe8766e70aFC602cd4Ac224f3AE8D8b17D565e756";
+const receivingAddress = "0x3E8a3803a3850c2EB1260ad1a389422Ca33173Ca";
 
-// web3.eth.getTransactionCount(randomAddress).then((count) => {
-//   console.log(count);
-// });
+// Step 3 - Check the balances of each address
+// web3.eth.getBalance(sendingAddress).then(console.log);
+// web3.eth.getBalance(receivingAddress).then(console.log);
 
-// web3.eth.getBlockNumber().then((num) => {
-//   console.log(num);
-// });
+const amountETH = "2";
+const amountWei = web3.utils.toWei(amountETH);
 
-// console.log(web3);
+// === CREATE TRANSACTION ===
+const rawTransaction = {
+  nonce: "0x05",
+  to: receivingAddress,
+  gasPrice: "0x20000000",
+  gasLimit: "0x30000",
+  value: web3.utils.numberToHex(amountWei),
+  data: "0x0000",
+};
 
-const contract = new web3.eth.Contract(batAbi, batAddress);
-console.log(contract.methods);
+// === SIGN TRANSACTION ===
+const privateKeySender =
+  "e0f609479304c8732004d2ea8a21e97664cdf7f99a94cc9a47c538e4eadc38c0";
 
-contract.methods.name().call((err, result) => {
-  console.log('name:', result);
-});
-contract.methods.totalSupply().call((err, result) => {
-  console.log('total supply: ', result);
-});
-contract.methods.decimals().call((err, result) => {
-  console.log('decimals: ', result);
-});
-contract.methods.tokenExchangeRate().call((err, result) => {
-  console.log('token exchange rate: ', result);
-});
-contract.methods.version().call((err, result) => {
-  console.log('version: ', result);
-});
-contract.methods.tokenCreationCap().call((err, result) => {
-  console.log('token creation cap: ', result);
-});
-contract.methods.symbol().call((err, result) => {
-  console.log('symbol: ', result);
-});
+const privateKeySenderHex = Buffer.from(privateKeySender, "hex");
+// good to here.
+const transaction = new EthereumTransaction(rawTransaction);
+transaction.sign(privateKeySenderHex);
+
+// === SEND THE TRANSACTION TO THE NETWORK ===
+const serializedTransaction = transaction.serialize();
+web3.eth.sendSignedTransaction(serializedTransaction);
