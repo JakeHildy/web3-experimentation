@@ -14,6 +14,7 @@ const receivingAddress = "0x3E8a3803a3850c2EB1260ad1a389422Ca33173Ca";
 // web3.eth.getBalance(sendingAddress).then(console.log);
 // web3.eth.getBalance(receivingAddress).then(console.log);
 
+// small change to test git config
 const amountETH = "2";
 const amountWei = web3.utils.toWei(amountETH);
 
