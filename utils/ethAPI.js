@@ -3,7 +3,9 @@ const Web3 = require("web3");
 const url = "http://127.0.0.1:7545";
 const ropstenUrl =
   "https://ropsten.infura.io/v3/0eed1fcfd57c445796f1cbb23fbb2a44";
-const web3 = new Web3(url);
+const mainnetUrl =
+  "https://mainnet.infura.io/v3/0eed1fcfd57c445796f1cbb23fbb2a44";
+const web3 = new Web3(mainnetUrl);
 
 /* ===== Get Account Balance ====================
 |  Gets the account Balance                     |
@@ -19,6 +21,14 @@ exports.getAccountBalance = async (address) => {
     if (err) console.log(err);
     else console.log(web3.utils.fromWei(bal, "ether"));
   });
+};
+
+/* ===== Get Gas Price ==========================
+|  Gets gas price                               |
+/* ============================================*/
+exports.getGasPrice = async () => {
+  const rawPrice = await web3.eth.getGasPrice();
+  console.log(web3.utils.fromWei(rawPrice, "gwei"), "gwei");
 };
 
 /* ===== Send Transaction =======================
